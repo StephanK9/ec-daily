@@ -390,6 +390,7 @@ const MOONS = [
 const WEEKS = [
 {n:1, name:"Dream & Drop", days:"1–7",
  kw:["openness","reception","possibility"],
+ actions:["receive","notice","open"],
  stable:"The opening week of every moon. Nothing is locked yet. direction is forming, not set. Ideas arrive before structure. The field is at its widest. This is not a slow week because nothing is happening. It's open because the cycle is still deciding what it is.",
  elCtx:{
    Fire:"In a Fire moon, this openness carries high creative energy without a fixed direction yet. Both are true simultaneously.",
@@ -400,6 +401,7 @@ const WEEKS = [
 },
 {n:2, name:"Spark & Plan", days:"8–14",
  kw:["clarity","preparation","direction"],
+ actions:["map","decide","prepare"],
  stable:"The second week of every moon. Impressions from Week 1 sharpen into direction. This is the intelligent preparation window. sketching, mapping, deciding. before full momentum builds. The cycle is past its widest point. Something is coming into focus.",
  elCtx:{
    Fire:"In a Fire moon, Spark & Plan is where the creative vision becomes something executable.",
@@ -410,6 +412,7 @@ const WEEKS = [
 },
 {n:3, name:"Move & Build", days:"15–21",
  kw:["action","momentum","creation"],
+ actions:["build","output","execute"],
  stable:"The third week of every moon — the highest-output period of the 28-day cycle. The direction is set, the preparation is done, and the energy is at its most practical and sustained. This is when what was conceived and planned becomes real. The pace is higher here than any other week.",
  elCtx:{
    Fire:"A Fire moon in Move & Build is the most expressive, generative combination in the EC year.",
@@ -420,6 +423,7 @@ const WEEKS = [
 },
 {n:4, name:"Reflect and Release", days:"22–28",
  kw:["completion","integration","release"],
+ actions:["assess","integrate","release"],
  stable:"The final week of every moon — where the cycle closes. The energy turns reflective. Things in progress either complete or are released. The pace slows relative to Week 3. The next moon is close. This week is the transition between what was and what's coming.",
  elCtx:{
    Fire:"A Fire moon in Reflect and Release — what was expressed is now being assessed. What worked stays. What didn't is released.",
@@ -429,6 +433,90 @@ const WEEKS = [
  }
 },
 ];
+
+// ═══════════════════════════════════════════════════
+// ARCHETYPE × WEEK COMBINATIONS
+// ═══════════════════════════════════════════════════
+const ARCH_WEEK = {
+  "The Dreamer": {
+    1:"The Dreamer's gift — receiving before knowing — is at its most available right now. Images and impressions arrive in Week 1 that won't be accessible later. Don't reach for them.",
+    2:"What surfaced in Week 1 starts to cohere into something recognisable. Not a plan yet — an orientation.",
+    3:"A Water archetype in the build week: the work here is internal movement, not external output. The Dreamer processes through feeling.",
+    4:"What came through the stillness gets carried forward or released. The Dreamer knows what to keep by noticing what won't leave.",
+  },
+  "The Sower": {
+    1:"The Sower reads the ground before placing anything in it. Week 1 is that reading — assessing conditions, sensing what's ready, waiting for the right signal.",
+    2:"What was read in Week 1 becomes deliberate intention. This is when seeds get chosen and placed with full attention.",
+    3:"The planting is in motion. The Sower's work — careful, committed, quality over quantity — is fully active now.",
+    4:"The seeds are in the ground. Week 4 is the pause between planting and the first signs of growth. Trust the ground.",
+  },
+  "The Student": {
+    1:"The Student at the opening of an Air cycle: wide, curious, willing to not know. The questions arriving now are more useful than any answers.",
+    2:"Curiosity sharpens into a thread worth following. Not mastery yet — orientation. The Student finds the direction.",
+    3:"The Student in the build week: learning by doing. Air in motion means communication, writing, connecting ideas into something transferable.",
+    4:"What actually shifted this cycle? What's been understood that wasn't before? That's the only question worth asking now.",
+  },
+  "The Artist": {
+    1:"The creative charge is present before the work has taken shape. The impulse is here; the form is still finding itself. Don't force it into shape yet.",
+    2:"The Artist moves from impulse to intention. What wants to be made becomes clearer. Decide what gets made before making it.",
+    3:"The Artist in full expression. Week 3 of a Fire moon is the highest-output point of the creative year. Make things. Show work.",
+    4:"The Artist sits with what was made. What landed? What didn't? The creative cycle closes with honest reckoning, not more making.",
+  },
+  "The Lover": {
+    1:"The attunement is wide open. This week is about noticing what actually nourishes — not what should, but what does.",
+    2:"What feeds you versus what just occupies you becomes sharper. The relational quality of everything comes into focus.",
+    3:"Depth work, relational investment, giving and receiving full attention. This is when Water archetypes do their most visible work.",
+    4:"Release what didn't nourish. Not dramatic — just honest. What gets to stay is what genuinely fed something real.",
+  },
+  "The Warrior": {
+    1:"The clarity that defines this archetype is forming but not yet sharp. The direction is sensed before it's decided.",
+    2:"Conviction sharpens into something executable. What this cycle stands behind is becoming clear enough to act on.",
+    3:"Directed, purposeful, operating from clarity. This is the week the Warrior archetype was built for. Move from what you know is true.",
+    4:"What did the fire clarify? What was burned away was supposed to go. What remains is what was always real.",
+  },
+  "The Gatherer": {
+    1:"The harvest is approaching but not yet here. This week is about recognising what's ready to arrive.",
+    2:"Create the conditions for the harvest — clearing space, making room, preparing to receive.",
+    3:"Results surface. Things complete. The practice is receiving without deflecting what actually arrives.",
+    4:"What came in this cycle? What was received well, what was resisted? The Earth cycle closes with what was genuinely gathered.",
+  },
+  "The Sovereign": {
+    1:"Established presence beginning a new 28-day arc. The authority here is quiet — not performing, just present.",
+    2:"What endures, what leads — these questions sharpen. The direction of the second half of the year becomes clearer.",
+    3:"Stable, grounded, self-directed. Peak solar energy in its most grounded form. Lead from what's been earned.",
+    4:"The peak is passing into integration. What was built at the height of the year gets carried forward.",
+  },
+  "The Teacher": {
+    1:"The distillation process begins. What has been understood starts to find its transmissible form.",
+    2:"What's worth passing on versus what's just accumulated knowledge becomes clearer. Discernment is the work.",
+    3:"Communicating, writing, teaching. Air in motion through this archetype means sharing what was hard-won.",
+    4:"What was understood this moon? What can now be offered that couldn't be before?",
+  },
+  "The Alchemist": {
+    1:"What needs to dissolve is becoming visible. The process hasn't started — but what's ready to go is surfacing.",
+    2:"The dissolution becomes conscious. What goes is named. The Alchemist identifies what's past its usefulness.",
+    3:"Release is happening. The emotional material around what's ending is most available here.",
+    4:"What was dissolved made space. The cycle closes with what genuinely remains after the release.",
+  },
+  "The Mystic": {
+    1:"The interior landscape is opening. What's been avoided begins to surface — not dramatically, just persistently.",
+    2:"The clarity to actually examine what was avoided becomes available. The Mystic moves toward it.",
+    3:"The interior is most accessible here. What's been carefully avoided holds the most accurate information.",
+    4:"What was faced doesn't go back underground. What was seen is seen. The cycle closes with that.",
+  },
+  "The Seer": {
+    1:"The conditions for stillness are forming. The noise hasn't dropped yet, but the direction is toward quiet.",
+    2:"The signal clarifies as the settling happens. What was obscured by activity begins to become visible.",
+    3:"The quietest active week of the year. What arrives in stillness is accurate. The clarity here is rare.",
+    4:"The year is nearly done. What the Seer perceived in this moon will inform what comes next.",
+  },
+  "The Phoenix": {
+    1:"New vision is arriving before the old year has closed. The impulse toward what's next is here before the ending is complete.",
+    2:"What this ignition is actually about becomes clearer — not the same thing rebuilt, something genuinely new.",
+    3:"The highest creative energy of the year's closing moon. What wants to emerge for next year is most visible now.",
+    4:"The fire has clarified what ends and what begins. The Day Out of Time is close. The cycle and the year both complete.",
+  },
+};
 
 // ═══════════════════════════════════════════════════
 // 7 PLANETS
@@ -563,7 +651,6 @@ function render(date){
 
   // Contextual sentences
   const moonCtxSentence = moon.ctx ? (moon.ctx[week.n] || moon.ctx[1]) : '';
-  const weekCtxSentence = week.elCtx ? (week.elCtx[moon.el] || '') : '';
   const planetCtxSentence = pl.moonCtx ? (pl.moonCtx[moon.el] || '') : '';
   const syn = buildSynthesis(moon, week, pl, lp, day, c);
 
@@ -614,6 +701,7 @@ function render(date){
       <p class="c-label">Week of Moon</p>
       <span class="stat-val">Week ${week.n}</span>
       <span class="stat-sub" style="margin-top:4px">${week.name}</span>
+      ${week.actions ? `<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-top:10px">${week.actions.map(a=>`<span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${c.p};border:1px solid ${c.b};padding:3px 7px;border-radius:2px">${a}</span>`).join('')}</div>` : ''}
     </div>
     <div class="card stat" style="border-top:2px solid rgba(201,168,76,0.3)">
       <p class="c-label">Planetary Day</p>
@@ -753,6 +841,191 @@ function pips(day,week,col){
   }).join('');
 }
 
+const PRACTICAL = {
+  "The Sun": {
+    "Fire": {
+      1: "Expressing what's been building without editing it first. Visibility over perfection.",
+      2: "Deciding what creative direction gets your full identity behind it.",
+      3: "Making something and putting it in front of people. Solar energy in a Fire week: maximum output.",
+      4: "Honestly assessing what you made this cycle and what it says about who you are right now.",
+    },
+    "Water": {
+      1: "Bringing your inner life outward, even briefly. What's true internally wants a little light.",
+      2: "Clarifying what you actually feel versus what you think you should feel.",
+      3: "Expressing emotional truth through creative work. Sun in Water is depth made visible.",
+      4: "Acknowledging what this cycle actually meant to you before it closes.",
+    },
+    "Earth": {
+      1: "Orienting your identity around something tangible you're building.",
+      2: "Making a concrete decision about what project or direction gets your focused attention.",
+      3: "Visible, physical, effortful work. Showing up fully and letting the output speak.",
+      4: "Recognising what was actually accomplished this cycle. Honest inventory.",
+    },
+    "Air": {
+      1: "Speaking or writing something true about where you are. Identity through articulation.",
+      2: "Clarifying your direction through conversation or writing. Thinking out loud works today.",
+      3: "Publishing, presenting, communicating. Sun Day in an Air week: say the thing.",
+      4: "Articulating what you understood this cycle. The insight becomes a statement.",
+    },
+  },
+  "The Moon": {
+    "Fire": {
+      1: "Noticing the creative impulses arriving before deciding what to do with them.",
+      2: "Feeling into which creative direction is right, not just thinking about it.",
+      3: "Letting intuition guide the output rather than forcing productivity.",
+      4: "Feeling what this creative cycle produced emotionally, not just practically.",
+    },
+    "Water": {
+      1: "Deep reception. Moon Day in a Water moon is the most internally attuned combination of the week.",
+      2: "Trusting what you feel over what you think. Emotional clarity is at its peak.",
+      3: "Relational, emotional, interior work. The doing here is feeling.",
+      4: "Sitting with what this cycle stirred up. Processing without rushing to resolve.",
+    },
+    "Earth": {
+      1: "Listening to what your body knows about conditions before acting.",
+      2: "Sensing which practical direction feels right before mapping it out.",
+      3: "Slow, rhythmic, embodied work. Moon Day energy works well with repetitive physical tasks.",
+      4: "Feeling what needs to be released versus what gets carried forward.",
+    },
+    "Air": {
+      1: "Noticing what thoughts arrive without grasping at them. Receptive thinking.",
+      2: "Trusting intuitive leaps over logical planning. The right idea comes sideways today.",
+      3: "Writing from instinct rather than outline. Moon in Air is unplanned communication.",
+      4: "Feeling into what was actually understood this cycle, beneath the explicit.",
+    },
+  },
+  "Mars": {
+    "Fire": {
+      1: "Starting the creative cycle with a decisive first move. No warming up — begin.",
+      2: "Making the decision and committing to it. Mars Day ends deliberation.",
+      3: "High-output execution. The most action-forward day of the most active week.",
+      4: "Cutting decisively what isn't working. Mars in Week 4 releases without sentimentality.",
+    },
+    "Water": {
+      1: "Moving toward what you've been feeling instead of sitting with it longer.",
+      2: "Naming what's been circling beneath the surface. Mars gives Water words.",
+      3: "Taking direct action on emotional material. Mars Day in Water is confrontational in a useful way.",
+      4: "Releasing what needs to go with force and finality rather than gradual drift.",
+    },
+    "Earth": {
+      1: "Taking one decisive physical action to orient the cycle. Plant the first thing.",
+      2: "Moving from planning into doing before the plan feels complete. Good enough — start.",
+      3: "High physical output. Mars in an Earth build week: work hard with your hands and body.",
+      4: "Cutting what doesn't belong in the next cycle. Decisive physical release.",
+    },
+    "Air": {
+      1: "Starting a conversation you've been circling. Say the thing you've been thinking.",
+      2: "Making the intellectual decision and committing to the direction.",
+      3: "Forceful communication. Mars Day in Air: the message that needs to land, lands today.",
+      4: "Cutting the ideas and projects that aren't worth carrying forward.",
+    },
+  },
+  "Mercury": {
+    "Fire": {
+      1: "Articulating the creative impulse. Writing or speaking what's forming makes it more real.",
+      2: "Mapping the creative plan in words. Mercury + Fire Week 2 = clarity through articulation.",
+      3: "Creating and communicating simultaneously. Writing about the work while doing it.",
+      4: "Naming what the creative cycle produced. The language for it arrives today.",
+    },
+    "Water": {
+      1: "Finding words for what's been felt but not yet named.",
+      2: "Conversations that help you understand what you're actually feeling.",
+      3: "Expressing emotional depth through writing, conversation, or message.",
+      4: "Articulating what needs to be released. Naming it makes it real.",
+    },
+    "Earth": {
+      1: "Making a concrete plan. Mercury's clarity serves Earth's need for structure.",
+      2: "Detailed planning. Lists, maps, step-by-step. Mercury Day is made for this.",
+      3: "Practical communication — instructions, documentation, clear directives.",
+      4: "Inventorying what was accomplished. Mercury makes the accounting clear.",
+    },
+    "Air": {
+      1: "The sharpest thinking day of the cycle's opening week. Connections arrive fast.",
+      2: "Planning through conversation and writing. Mercury in Air Week 2 is the clearest mental day.",
+      3: "Peak communication. Publish, present, send. Mercury Day in Air Move and Build week.",
+      4: "Final articulation of what was understood. The insight becomes portable.",
+    },
+  },
+  "Jupiter": {
+    "Fire": {
+      1: "Seeing the larger creative arc before the details arrive. What is this cycle for?",
+      2: "Expanding the creative vision beyond the obvious. Jupiter pushes Fire past its first idea.",
+      3: "Making something ambitious. Jupiter Day in Fire Week 3 is for the bigger version.",
+      4: "Understanding the meaning of what was created this cycle, not just what it was.",
+    },
+    "Water": {
+      1: "Finding the larger meaning in what you're feeling. The emotional pattern becomes visible.",
+      2: "Understanding why something matters emotionally, not just that it does.",
+      3: "Generous emotional work. Jupiter expands Water's depth into wisdom.",
+      4: "Integrating what this cycle meant in a larger context. The lesson becomes clear.",
+    },
+    "Earth": {
+      1: "Seeing the long-term significance of what you're building before you build it.",
+      2: "Planning with a longer horizon than usual. Jupiter brings the 10-year view.",
+      3: "Building something with lasting significance. Jupiter + Earth Week 3 = durable output.",
+      4: "Recognising what this cycle contributed to the larger arc you're on.",
+    },
+    "Air": {
+      1: "The widest thinking of the opening week. Big connections, long-range questions.",
+      2: "Strategic planning. Jupiter in Air Week 2 is for mapping the larger architecture.",
+      3: "Teaching, publishing, broadcasting. Jupiter Day makes Air's reach go furthest.",
+      4: "Synthesising what was understood into wisdom worth carrying forward.",
+    },
+  },
+  "Venus": {
+    "Fire": {
+      1: "Noticing what you find beautiful in what's forming. Aesthetic instinct is sharp today.",
+      2: "Making aesthetic decisions. Venus Day is when the look and feel of the work gets decided.",
+      3: "Making something beautiful. The most visually and aesthetically alive day of the build week.",
+      4: "Appreciating what was made. Venus closes the creative cycle with grace, not critique.",
+    },
+    "Water": {
+      1: "Allowing pleasure and beauty to be forms of information. What draws you matters.",
+      2: "Relational clarity. Venus in Water Week 2 is for understanding what you love and why.",
+      3: "Deep relational and sensory work. Connection, beauty, and feeling at their peak.",
+      4: "Releasing with love rather than relief. Venus closes Water cycles gently.",
+    },
+    "Earth": {
+      1: "Orienting toward what is beautiful and well-made in the physical world.",
+      2: "Aesthetic planning. Venus Day in Earth Week 2 is for the design and feel of the thing.",
+      3: "Craftsmanship. Making something physical with care and beauty. The quality matters today.",
+      4: "Appreciating what was built. Taking time to actually notice the thing before moving on.",
+    },
+    "Air": {
+      1: "Beautiful thinking. Ideas that are elegant as well as useful arrive today.",
+      2: "Harmonious planning. Venus in Air Week 2 finds the graceful version of the plan.",
+      3: "Aesthetic communication. How something is expressed matters as much as what it says.",
+      4: "Completing with grace. Venus closes Air cycles through appreciation, not analysis.",
+    },
+  },
+  "Saturn": {
+    "Fire": {
+      1: "Committing to the creative direction seriously. Saturn doesn't open cycles lightly.",
+      2: "Building the real structure behind the creative vision. The framework that makes the art possible.",
+      3: "Disciplined output. Saturn Day in Fire Week 3 is for sustained effort, not inspiration.",
+      4: "Honest, rigorous assessment of what was made. Saturn closes cycles with standards.",
+    },
+    "Water": {
+      1: "Taking your inner life seriously. Saturn gives Water's impressions weight and form.",
+      2: "Structuring the emotional work. What needs a container to be useful?",
+      3: "Committed relational or interior work. Saturn in Water build week is for the long-form interior project.",
+      4: "Formal release. Saturn closes Water cycles with finality and intention.",
+    },
+    "Earth": {
+      1: "The most grounded day of the cycle's opening week. Slow, serious, foundational.",
+      2: "Structural planning. Saturn + Earth Week 2 is the best day for architecture and systems.",
+      3: "Sustained, committed physical work. The most enduring output of the build week.",
+      4: "Rigorous inventory. Saturn closes Earth cycles by accounting for what actually holds.",
+    },
+    "Air": {
+      1: "Committing to a direction of inquiry. Saturn grounds Air's openness into focus.",
+      2: "Building the intellectual structure. The framework for the ideas.",
+      3: "Disciplined communication. Writing the thing properly, not quickly.",
+      4: "Completing with rigour. Saturn closes Air cycles by ensuring what was understood is actually sound.",
+    },
+  },
+};
+
 function buildSynthesis(moon, week, pl, lp, day, c){
   if(week.n===0) return `Today is the Day Out of Time. December 31. The 13-moon cycle is complete. No moon governs today. No week. The year ends and the space between years opens.<br><br>The astronomical moon is ${lp.name}, ${lp.illum}% illuminated. ${lp.context}`;
 
@@ -807,36 +1080,28 @@ function buildSynthesis(moon, week, pl, lp, day, c){
   const pos = dayInWeek <= 2 ? 'early' : dayInWeek <= 4 ? 'mid' : dayInWeek <= 6 ? 'late' : 'closing';
   const arcText = (arcMap[week.n] && arcMap[week.n][pos]) || '';
 
-  // Archetype in context of this week position
-  const archWeekInsight = {
-    1: `${moon.arch} in Week 1: the archetype's energy is present but unformed. The character of this moon is announcing itself — not yet in full motion.`,
-    2: `${moon.arch} in Week 2: the archetype's intelligence is sharpening into direction. What this character does best is becoming clearer.`,
-    3: `${moon.arch} in Week 3: the archetype is at full expression. This is the week where ${moon.arch.toLowerCase().replace('the ','')} energy operates at its most visible and effective.`,
-    4: `${moon.arch} in Week 4: the archetype is completing its cycle. What this character came to do in this moon is landing or being released.`,
-  }[week.n] || '';
+  // Archetype × week — specific meaning of this archetype at this point in the cycle
+  const archWeekText = (ARCH_WEEK[moon.arch] && ARCH_WEEK[moon.arch][week.n]) || '';
 
-  // Element + week combination insight
+  // Element + week combination
   const elWeekInsight = week.elCtx[moon.el] || '';
 
-  // Planet insight
+  // Planet — clean single contextual line, no redundant label
   const plCtx = pl.moonCtx[moon.el] || pl.stable.split('.')[0];
+  const planetLine = `<strong style="color:${pl.col}">${pl.name}</strong> — ${pl.kw.join(', ')}. ${plCtx}.`;
 
-  // Practical layer — what this combination is specifically good for today
-  const practicalMap = {
-    Fire: { 1:'Starting things, making initial moves, expressing what\'s been forming.', 2:'Mapping the creative direction, deciding what gets made this cycle.', 3:'Output, making, showing work. The highest-energy window for Fire.', 4:'Assessing what was created, releasing what didn\'t land.' },
-    Water: { 1:'Receiving, noticing what feels true, letting impressions arrive.', 2:'Clarifying what actually matters beneath the surface.', 3:'Depth work — emotional, relational, interior.', 4:'Processing, integrating, letting what\'s complete be complete.' },
-    Earth: { 1:'Orienting, reading the conditions before placing anything.', 2:'Structuring, planning the concrete steps.', 3:'Building, making, doing the physical work.', 4:'Taking stock of what was actually built and what holds.' },
-    Air: { 1:'Thinking widely, connecting ideas, letting questions arrive.', 2:'Sharpening the thinking into something usable.', 3:'Communicating, writing, transmitting what\'s been understood.', 4:'Discerning what\'s worth keeping and what gets released.' },
-  };
-  const practical = (practicalMap[moon.el] && practicalMap[moon.el][week.n]) || '';
+  // Lunar phase
+  const phaseLine = `${lp.name} at ${lp.illum}%. ${lp.context}`;
+
+  // Practical layer — planet × element × week (112 unique combinations)
+  const practical = (PRACTICAL[pl.planet] && PRACTICAL[pl.planet][moon.el] && PRACTICAL[pl.planet][moon.el][week.n]) || '';
 
   return [
     arcText,
-    archWeekInsight,
-    elWeekInsight,
-    `<strong style="color:${pl.col}">${pl.name}</strong> today. ${plCtx}.`,
-    `${lp.name}, ${lp.illum}% illuminated. ${lp.context}`,
-    practical ? `<span style="color:var(--cream-dim);font-style:normal;font-family:'Cinzel',serif;font-size:0.82em;letter-spacing:1px;text-transform:uppercase">Today is particularly good for</span> ${practical}` : ''
+    archWeekText,
+    planetLine,
+    phaseLine,
+    practical ? `<span style="color:var(--cream-dim);font-style:normal;font-family:'Cinzel',serif;font-size:0.82em;letter-spacing:1px;text-transform:uppercase">Particularly good for</span> ${practical}` : ''
   ].filter(Boolean).join('<br><br>');
 }
 

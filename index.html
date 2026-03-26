@@ -915,5 +915,15 @@ function goToday(){cur=new Date();cur.setHours(12,0,0,0);render(cur);}
 
 render(cur);
 </script>
+  <script>
+  function reportHeight() {
+    window.parent.postMessage({ type: 'ec-height', height: document.body.scrollHeight }, '*');
+  }
+  window.addEventListener('load', reportHeight);
+  window.addEventListener('resize', reportHeight);
+  // Report again after fonts/images settle
+  setTimeout(reportHeight, 500);
+  setTimeout(reportHeight, 1500);
+</script>
 </body>
 </html>

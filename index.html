@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Earth Calendar — Daily Reading</title>
+<title>The Earth Calendar. Daily Reading</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -46,13 +46,74 @@
   .date-back:hover { color:var(--gold); }
   #date-picker { display:none; }
 
-  /* ── CARD BASE ── */
-  .card { border:1px solid var(--border); border-radius:3px; background:var(--card); backdrop-filter:blur(10px); margin-bottom:14px; animation:up .5s ease both; }
-  @keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .card:nth-child(1){animation-delay:.04s} .card:nth-child(2){animation-delay:.10s}
-  .card:nth-child(3){animation-delay:.16s} .card:nth-child(4){animation-delay:.22s}
-  .card:nth-child(5){animation-delay:.28s} .card:nth-child(6){animation-delay:.34s}
-  .card:nth-child(7){animation-delay:.40s}
+
+  /* ── CARD BASE. start hidden, reveal on scroll ── */
+  .card {
+    border:1px solid var(--border); border-radius:3px; background:var(--card);
+    backdrop-filter:blur(10px); margin-bottom:14px;
+    opacity:0; transform:translateY(32px);
+    transition: opacity 1.1s ease, transform 1.1s ease, border-color 0.3s;
+  }
+  .card.visible { opacity:1; transform:translateY(0); }
+  .card:hover { border-color: var(--border-md); }
+
+  /* ── HERO CARD REVEAL SEQUENCE ── */
+  /* Step 1: sigil rises from dark */
+  @keyframes sigilRise {
+    0%   { opacity:0; transform:scale(0.85); filter:blur(8px); }
+    40%  { opacity:0.18; transform:scale(1.02); filter:blur(2px); }
+    100% { opacity:0.13; transform:scale(1); filter:blur(0px); }
+  }
+  /* Step 2: text bleeds in like ink */
+  @keyframes inkBleed {
+    0%   { opacity:0; filter:blur(6px); transform:translateY(8px); }
+    100% { opacity:1; filter:blur(0px); transform:translateY(0); }
+  }
+  @keyframes inkBleedSlow {
+    0%   { opacity:0; filter:blur(10px); }
+    100% { opacity:1; filter:blur(0px); }
+  }
+
+  .sigil-wrap {
+    animation: sigilRise 2.4s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .hero-ink-1 { opacity:0; animation: inkBleed 1.2s ease both; animation-delay: 0.9s; }
+  .hero-ink-2 { opacity:0; animation: inkBleed 1.4s ease both; animation-delay: 1.2s; }
+  .hero-ink-3 { opacity:0; animation: inkBleed 1.4s ease both; animation-delay: 1.5s; }
+  .hero-ink-4 { opacity:0; animation: inkBleed 1.4s ease both; animation-delay: 1.8s; }
+  .hero-ink-5 { opacity:0; animation: inkBleedSlow 1.8s ease both; animation-delay: 2.1s; }
+  .hero-ink-6 { opacity:0; animation: inkBleedSlow 2s ease both; animation-delay: 2.5s; }
+
+  /* ── CONSTELLATION SIGIL. breathing glow after reveal ── */
+  @keyframes sigilBreathe {
+    0%,100% { opacity:0.10; }
+    50%      { opacity:0.20; }
+  }
+  .sigil-wrap.breathing { animation: sigilBreathe 5s ease-in-out infinite; }
+
+  /* ── KEYWORD SHIMMER. smooth JS fade, no flicker ── */
+  @keyframes kwIn {
+    from { opacity:0; transform:translateX(-4px); }
+    to   { opacity:0.9; transform:translateX(0); }
+  }
+  .kw { opacity:0.9; transition: none; }
+  .kw.anim-pending { opacity:0; }
+  .kw.visible { animation: kwIn 0.8s ease both; }
+
+  /* ── PLANET SYMBOL PULSE ── */
+  @keyframes planetPulse {
+    0%,100% { filter: drop-shadow(0 0 3px currentColor); }
+    50%      { filter: drop-shadow(0 0 14px currentColor); }
+  }
+  .planet-sym-pulse { animation: planetPulse 4s ease-in-out infinite; }
+
+  /* ── HEADER ── */
+  header { animation: headerIn 1.4s ease both; }
+  @keyframes headerIn {
+    from { opacity:0; transform:translateY(-12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .date-nav { animation: headerIn 1.4s ease 0.3s both; }
 
   /* ── CARD LABEL ── */
   .c-label { font-family:'Cinzel',serif; font-size:10px; letter-spacing:5px; text-transform:uppercase; color:var(--cream-dim); margin-bottom:14px; }
@@ -144,8 +205,8 @@
   <div class="date-nav">
     <button class="nav-btn" id="prev-day">←</button>
     <div class="date-ctr" onclick="document.getElementById('date-picker').showPicker?.()??document.getElementById('date-picker').click()">
-      <div class="date-greg" id="greg-date">—</div>
-      <div class="date-wday" id="greg-wday">—</div>
+      <div class="date-greg" id="greg-date">,</div>
+      <div class="date-wday" id="greg-wday">,</div>
       <button class="date-back" id="today-btn" onclick="event.stopPropagation();goToday()">Return to Today</button>
     </div>
     <button class="nav-btn" id="next-day">→</button>
@@ -175,10 +236,10 @@ const MOONS = [
 {
   name:"Dreaming", s:[1,1], e:[1,28], arch:"The Dreamer", el:"Water", sym:"○",
   kw:["stillness","reception","the void"],
-  stable:"The year opens before it knows what it is. Dreaming Moon is the water beneath everything — pre-verbal, pre-form, existing before direction has arrived. This is the first of the Water moons: internal, receptive, still. Images surface here before they have names.",
+  stable:"The year opens before it knows what it is. Dreaming Moon is the water beneath everything. pre-verbal, pre-form, existing before direction has arrived. This is the first of the Water moons: internal, receptive, still. Images surface here before they have names.",
   ctx:{
     1:"Day one of the cycle and everything is still open. The impression is more useful than the plan right now.",
-    2:"The direction is beginning to form — something is pulling into focus from the stillness.",
+    2:"The direction is beginning to form. something is pulling into focus from the stillness.",
     3:"Mid-cycle in a Water moon: the internal work is the real work, even when it looks like nothing is happening.",
     4:"The Dreaming cycle closes. What came through the stillness becomes clearer as the moon ends."
   }
@@ -186,21 +247,21 @@ const MOONS = [
 {
   name:"Seed", s:[1,29], e:[2,25], arch:"The Sower", el:"Earth", sym:"△",
   kw:["intention","planting","direction"],
-  stable:"Seed Moon is where intention meets ground. Earth element — which means nothing stays abstract here for long. The Sower doesn't scatter. They read the conditions, choose what goes in, and commit to it. This moon is about the quality of what gets started, not how much.",
+  stable:"Seed Moon is where intention meets ground. Earth element. which means nothing stays abstract here for long. The Sower doesn't scatter. They read the conditions, choose what goes in, and commit to it. This moon is about the quality of what gets started, not how much.",
   ctx:{
     1:"Day one of Seed Moon. The ground is ready. What gets planted now carries this moon's full weight.",
     2:"The plan sharpens into something actionable. The direction is clear enough to commit to.",
-    3:"The work is in motion. Seed Moon in its action week — what was planted is taking root.",
+    3:"The work is in motion. Seed Moon in its action week. what was planted is taking root.",
     4:"The cycle closes. What was seeded this moon is already in the ground. The rest is time."
   }
 },
 {
   name:"Sprout", s:[2,26], e:[3,25], arch:"The Student", el:"Air", sym:")",
   kw:["emergence","curiosity","early form"],
-  stable:"Something broke the surface. Sprout Moon is the first Air moon of the year — curious, questioning, still finding its shape. The Student archetype doesn't know yet, and that's correct. This is not a moon for certainty. Questions are more alive here than answers.",
+  stable:"Something broke the surface. Sprout Moon is the first Air moon of the year. curious, questioning, still finding its shape. The Student archetype doesn't know yet, and that's correct. This is not a moon for certainty. Questions are more alive here than answers.",
   ctx:{
     1:"The cycle begins fresh. The energy is open, the form still loose.",
-    2:"The curiosity sharpens — something is becoming clearer even if it's not fully formed.",
+    2:"The curiosity sharpens. something is becoming clearer even if it's not fully formed.",
     3:"Action week in an Air moon: movement through thinking, connecting, communicating.",
     4:"Sprout Moon closes. What was learning and emerging lands into its final early form."
   }
@@ -208,18 +269,18 @@ const MOONS = [
 {
   name:"Bloom", s:[3,26], e:[4,22], arch:"The Artist", el:"Fire", sym:"▲",
   kw:["expression","visibility","creation"],
-  stable:"The fire moons are where things come out of hiding — where energy wants to be seen, shaped, shared. Bloom is the moment the cycle turns fully outward. The Artist archetype doesn't wait for permission. What was forming in Sprout is ready to move, ready to be made visible.",
+  stable:"The fire moons are where things come out of hiding. where energy wants to be seen, shaped, shared. Bloom is the moment the cycle turns fully outward. The Artist archetype doesn't wait for permission. What was forming in Sprout is ready to move, ready to be made visible.",
   ctx:{
     1:"Day one of Bloom. The creative arc is fully ahead. The charge is here before the direction is fixed.",
     2:"The vision is sharpening into something makeable. The plan behind the expression.",
-    3:"Bloom Moon in its peak action week — this is the highest-output window of the year's creative cycle.",
+    3:"Bloom Moon in its peak action week. this is the highest-output window of the year's creative cycle.",
     4:"The Bloom cycle closes. What was made and expressed lands into its completed form."
   }
 },
 {
   name:"Nectar", s:[4,23], e:[5,20], arch:"The Lover", el:"Water", sym:"○",
   kw:["pleasure","nourishment","receiving"],
-  stable:"Nectar Moon follows the peak of Bloom. The energy turns from outward expression toward depth and savoring. A Water moon — feeling, relational, attuned to what actually nourishes. The Lover archetype is specific: not about romance, but about the capacity to receive what is genuinely good. Pleasure as signal.",
+  stable:"Nectar Moon follows the peak of Bloom. The energy turns from outward expression toward depth and savoring. A Water moon. feeling, relational, attuned to what actually nourishes. The Lover archetype is specific: not about romance, but about the capacity to receive what is genuinely good. Pleasure as signal.",
   ctx:{
     1:"The cycle opens in depth. The question this moon asks is what actually feeds you.",
     2:"What matters most is becoming clearer. The relational quality of work and life sharpens.",
@@ -230,10 +291,10 @@ const MOONS = [
 {
   name:"Flame", s:[5,21], e:[6,17], arch:"The Warrior", el:"Fire", sym:"▲",
   kw:["conviction","clarity","will"],
-  stable:"Flame Moon is the second Fire moon — but where Bloom was about creative expression, Flame is about conviction. The Warrior archetype moves from absolute clarity, not from emotion. This moon sharpens what you stand behind. Ambiguity tends to resolve here. The fire doesn't scatter — it cuts.",
+  stable:"Flame Moon is the second Fire moon. but where Bloom was about creative expression, Flame is about conviction. The Warrior archetype moves from absolute clarity, not from emotion. This moon sharpens what you stand behind. Ambiguity tends to resolve here. The fire doesn't scatter. it cuts.",
   ctx:{
     1:"Flame opens. The directional quality of this moon is already present from the first day.",
-    2:"The conviction is forming into a plan — what you stand behind becomes actionable.",
+    2:"The conviction is forming into a plan. what you stand behind becomes actionable.",
     3:"Flame Moon in full motion: directed, purposeful, at peak will.",
     4:"The cycle closes with what remains after the fire has clarified. That's what's real."
   }
@@ -241,7 +302,7 @@ const MOONS = [
 {
   name:"Fruit", s:[6,18], e:[7,15], arch:"The Gatherer", el:"Earth", sym:"△",
   kw:["fulfillment","receiving","abundance"],
-  stable:"Fruit Moon is the midpoint of the year — an Earth moon of arrival. What was planted, cultivated, and fought for earlier in the cycle begins to appear in its physical form. The Gatherer archetype is specific: receiving is its own practice. This moon requires the capacity to let the harvest actually land.",
+  stable:"Fruit Moon is the midpoint of the year. an Earth moon of arrival. What was planted, cultivated, and fought for earlier in the cycle begins to appear in its physical form. The Gatherer archetype is specific: receiving is its own practice. This moon requires the capacity to let the harvest actually land.",
   ctx:{
     1:"The arrival cycle opens. What's coming has been a long time forming.",
     2:"The shape of what's arriving becomes more visible. Start to take stock.",
@@ -252,7 +313,7 @@ const MOONS = [
 {
   name:"Sunroot", s:[7,16], e:[8,12], arch:"The Sovereign", el:"Earth", sym:"△",
   kw:["sovereignty","groundedness","legacy"],
-  stable:"Sunroot Moon sits at the height of summer — the most solar point of the year. Earth element combined with the Sovereign archetype describes something specific: this is the quality of established presence. Not striving, not building — standing. What has been built holds. The longest light, the most grounded authority.",
+  stable:"Sunroot Moon sits at the height of summer. the most solar point of the year. Earth element combined with the Sovereign archetype describes something specific: this is the quality of established presence. Not striving, not building. standing. What has been built holds. The longest light, the most grounded authority.",
   ctx:{
     1:"The peak of the year opens. The energy is full, stable, sovereign.",
     2:"The direction of the second half of the year becomes clear. What endures is obvious.",
@@ -263,9 +324,9 @@ const MOONS = [
 {
   name:"Harvest", s:[8,13], e:[9,9], arch:"The Teacher", el:"Air", sym:")",
   kw:["distillation","sharing","discernment"],
-  stable:"Harvest Moon follows the summer peak. An Air moon — the energy shifts from presence to transmission. The Teacher archetype emerges when experience has been lived long enough to distill: not performing knowledge, but offering what has actually been understood. This moon asks what's worth keeping and what's worth passing on.",
+  stable:"Harvest Moon follows the summer peak. An Air moon. the energy shifts from presence to transmission. The Teacher archetype emerges when experience has been lived long enough to distill: not performing knowledge, but offering what has actually been understood. This moon asks what's worth keeping and what's worth passing on.",
   ctx:{
-    1:"Harvest opens. The distillation process begins — what does this year actually know?",
+    1:"Harvest opens. The distillation process begins. what does this year actually know?",
     2:"The discernment sharpens. What gets shared versus what gets released becomes clear.",
     3:"Peak week of Harvest: communication, teaching, and transmission are most alive here.",
     4:"The cycle closes. What was understood is now something that can be carried forward."
@@ -274,7 +335,7 @@ const MOONS = [
 {
   name:"Shedding", s:[9,10], e:[10,7], arch:"The Alchemist", el:"Water", sym:"○",
   kw:["release","truth","transformation"],
-  stable:"Shedding Moon is the autumn turn — a Water moon of dissolution. The Alchemist archetype understands that new forms require the release of old ones. This isn't destruction — it's the specific intelligence of knowing what has served its purpose. The emotional material that surfaces in this moon tends to be accurate.",
+  stable:"Shedding Moon is the autumn turn. a Water moon of dissolution. The Alchemist archetype understands that new forms require the release of old ones. This isn't destruction. it's the specific intelligence of knowing what has served its purpose. The emotional material that surfaces in this moon tends to be accurate.",
   ctx:{
     1:"The release cycle opens. What's been held past its time is ready to move.",
     2:"What needs to go becomes clearer. The truth of the cycle surfaces.",
@@ -285,7 +346,7 @@ const MOONS = [
 {
   name:"Shadow", s:[10,8], e:[11,4], arch:"The Mystic", el:"Air", sym:")",
   kw:["descent","mystery","subconscious"],
-  stable:"Shadow Moon is the deep interior of the year — an Air moon, which makes it specific: this is not emotional processing, it's the mind going where it usually avoids. The Mystic archetype carries a lantern, not armor. What gets examined in this moon tends to be what has been most carefully avoided. The material here is real.",
+  stable:"Shadow Moon is the deep interior of the year. an Air moon, which makes it specific: this is not emotional processing, it's the mind going where it usually avoids. The Mystic archetype carries a lantern, not armor. What gets examined in this moon tends to be what has been most carefully avoided. The material here is real.",
   ctx:{
     1:"Shadow opens. The interior landscape becomes more accessible and more demanding.",
     2:"What's been avoided starts to surface with enough clarity to examine.",
@@ -296,7 +357,7 @@ const MOONS = [
 {
   name:"Silence", s:[11,5], e:[12,2], arch:"The Seer", el:"Air", sym:")",
   kw:["stillness","perception","integration"],
-  stable:"Silence Moon is the quietest period of the year — an Air moon of pure perception. The Seer archetype doesn't predict, it perceives. When the noise drops below a certain level, what was always there becomes visible. This moon doesn't generate insight — it creates the conditions in which insight was already present can be seen.",
+  stable:"Silence Moon is the quietest period of the year. an Air moon of pure perception. The Seer archetype doesn't predict, it perceives. When the noise drops below a certain level, what was always there becomes visible. This moon doesn't generate insight. it creates the conditions in which insight was already present can be seen.",
   ctx:{
     1:"Silence opens. The pace drops. What can only be heard in stillness begins to arrive.",
     2:"The perception sharpens. Something that was obscured by activity becomes clear.",
@@ -307,7 +368,7 @@ const MOONS = [
 {
   name:"Spark", s:[12,3], e:[12,30], arch:"The Phoenix", el:"Fire", sym:"▲",
   kw:["ignition","renewal","rebirth"],
-  stable:"Spark Moon is the final moon of the year — and a Fire moon. The Phoenix archetype is specific: this is not about rebuilding what existed. It's about what emerges from what ended. The Spark precedes the flame — the new cycle is already alive here, even before the year closes. What wants to happen next begins to show its shape.",
+  stable:"Spark Moon is the final moon of the year. and a Fire moon. The Phoenix archetype is specific: this is not about rebuilding what existed. It's about what emerges from what ended. The Spark precedes the flame. the new cycle is already alive here, even before the year closes. What wants to happen next begins to show its shape.",
   ctx:{
     1:"Spark opens. The new vision is arriving before the old year has closed.",
     2:"The direction of the next cycle sharpens. Something is already igniting.",
@@ -323,42 +384,42 @@ const MOONS = [
 const WEEKS = [
 {n:1, name:"Dream & Drop", days:"1–7",
  kw:["openness","reception","possibility"],
- stable:"The opening week of every moon. Nothing is locked yet — direction is forming, not set. Ideas arrive before structure. The field is at its widest. This is not a slow week because nothing is happening. It's open because the cycle is still deciding what it is.",
+ stable:"The opening week of every moon. Nothing is locked yet. direction is forming, not set. Ideas arrive before structure. The field is at its widest. This is not a slow week because nothing is happening. It's open because the cycle is still deciding what it is.",
  elCtx:{
    Fire:"In a Fire moon, this openness carries high creative energy without a fixed direction yet. Both are true simultaneously.",
-   Water:"In a Water moon, Dream & Drop is the most receptive combination — felt before understood.",
+   Water:"In a Water moon, Dream & Drop is the most receptive combination. felt before understood.",
    Earth:"In an Earth moon, Week 1 is where the practical vision forms before the concrete work begins.",
-   Air:"In an Air moon, Dream & Drop brings wide mental openness — connections forming before structure.",
+   Air:"In an Air moon, Dream & Drop brings wide mental openness. connections forming before structure.",
  }
 },
 {n:2, name:"Spark & Plan", days:"8–14",
  kw:["clarity","preparation","direction"],
- stable:"The second week of every moon. Impressions from Week 1 sharpen into direction. This is the intelligent preparation window — sketching, mapping, deciding — before full momentum builds. The cycle is past its widest point. Something is coming into focus.",
+ stable:"The second week of every moon. Impressions from Week 1 sharpen into direction. This is the intelligent preparation window. sketching, mapping, deciding. before full momentum builds. The cycle is past its widest point. Something is coming into focus.",
  elCtx:{
    Fire:"In a Fire moon, Spark & Plan is where the creative vision becomes something executable.",
-   Water:"In a Water moon, Week 2 brings emotional clarity — what actually matters surfaces here.",
+   Water:"In a Water moon, Week 2 brings emotional clarity. what actually matters surfaces here.",
    Earth:"In an Earth moon, the planning is concrete. The structure gets built before the work begins.",
-   Air:"In an Air moon, Spark & Plan is the sharpest thinking window of the month — mental clarity peaks.",
+   Air:"In an Air moon, Spark & Plan is the sharpest thinking window of the month. mental clarity peaks.",
  }
 },
 {n:3, name:"Move & Build", days:"15–21",
  kw:["action","momentum","creation"],
- stable:"The third week of every moon — the highest-output period of the 28-day cycle. The direction is set, the preparation is done, and the energy is at its most practical and sustained. This is when what was conceived and planned becomes real. The pace is higher here than any other week.",
+ stable:"The third week of every moon. the highest-output period of the 28-day cycle. The direction is set, the preparation is done, and the energy is at its most practical and sustained. This is when what was conceived and planned becomes real. The pace is higher here than any other week.",
  elCtx:{
    Fire:"A Fire moon in Move & Build is the most expressive, generative combination in the EC year.",
-   Water:"In a Water moon, Move & Build activates through depth — emotional work, relational investment, interior development.",
+   Water:"In a Water moon, Move & Build activates through depth. emotional work, relational investment, interior development.",
    Earth:"An Earth moon in Move & Build is when things get physically made and built. The most concrete window of the year.",
-   Air:"In an Air moon, Move & Build channels through thought and communication — writing, connecting, transmitting.",
+   Air:"In an Air moon, Move & Build channels through thought and communication. writing, connecting, transmitting.",
  }
 },
 {n:4, name:"Reflect & Release", days:"22–28",
  kw:["completion","integration","release"],
- stable:"The final week of every moon — where the cycle closes. The energy turns reflective. Things in progress either complete or are released. The pace slows relative to Week 3. The next moon is close. This week is the transition between what was and what's coming.",
+ stable:"The final week of every moon. where the cycle closes. The energy turns reflective. Things in progress either complete or are released. The pace slows relative to Week 3. The next moon is close. This week is the transition between what was and what's coming.",
  elCtx:{
-   Fire:"A Fire moon in Reflect & Release — what was expressed is now being assessed. What worked stays. What didn't is released.",
-   Water:"In a Water moon, Week 4 is the deepest processing point — emotional integration and natural release.",
+   Fire:"A Fire moon in Reflect & Release. what was expressed is now being assessed. What worked stays. What didn't is released.",
+   Water:"In a Water moon, Week 4 is the deepest processing point. emotional integration and natural release.",
    Earth:"An Earth moon in Reflect & Release takes stock of what was actually built. Tangible completion.",
-   Air:"In an Air moon, Week 4 brings mental clarity about the whole cycle — what was understood, what gets let go.",
+   Air:"In an Air moon, Week 4 brings mental clarity about the whole cycle. what was understood, what gets let go.",
  }
 },
 ];
@@ -368,31 +429,31 @@ const WEEKS = [
 // ═══════════════════════════════════════════════════
 const PLANETS = [
 {sym:"☉", name:"Sun Day",     planet:"The Sun",   col:"#f0c040", kw:["identity","radiance","expression"],
- stable:"Sunday carries solar energy — outward, vital, self-directed. The Sun governs identity and creative expression. This is the most visible day of the week: things that require confidence, presence, or being fully yourself are naturally supported. The quality is expansive and direct.",
+ stable:"Sunday carries solar energy. outward, vital, self-directed. The Sun governs identity and creative expression. This is the most visible day of the week: things that require confidence, presence, or being fully yourself are naturally supported. The quality is expansive and direct.",
  moonCtx:{ Fire:"Sun Day in a Fire moon: double outward energy. Expression and visibility peak.", Water:"Sun Day in a Water moon: the solar quality brings your inner life outward.", Earth:"Sun Day in an Earth moon: creative identity expressed through tangible, physical work.", Air:"Sun Day in an Air moon: identity through ideas, words, and visible thinking." }
 },
 {sym:"☽", name:"Moon Day",    planet:"The Moon",  col:"#b8cce0", kw:["feeling","rhythm","vision"],
- stable:"Monday carries lunar energy — internal, rhythmic, feeling-first. The Moon governs emotional intelligence and inner rhythm. This is the most receptive day of the week: intuition is high, logic-heavy execution is harder. Work that requires sensitivity or creative attunement tends to go well.",
- moonCtx:{ Fire:"Moon Day in a Fire moon: the outward creative energy turns inward for a day — vision over output.", Water:"Moon Day in a Water moon: both are receptive. Intuition is at its peak this combination.", Earth:"Moon Day in an Earth moon: the body's intelligence is most available here.", Air:"Moon Day in an Air moon: the mind quiets into feeling. What is sensed is more reliable than what is thought." }
+ stable:"Monday carries lunar energy. internal, rhythmic, feeling-first. The Moon governs emotional intelligence and inner rhythm. This is the most receptive day of the week: intuition is high, logic-heavy execution is harder. Work that requires sensitivity or creative attunement tends to go well.",
+ moonCtx:{ Fire:"Moon Day in a Fire moon: the outward creative energy turns inward for a day. vision over output.", Water:"Moon Day in a Water moon: both are receptive. Intuition is at its peak this combination.", Earth:"Moon Day in an Earth moon: the body's intelligence is most available here.", Air:"Moon Day in an Air moon: the mind quiets into feeling. What is sensed is more reliable than what is thought." }
 },
 {sym:"♂", name:"Mars Day",    planet:"Mars",      col:"#e03030", kw:["action","courage","friction"],
- stable:"Tuesday carries Martian energy — direct, initiating, high-force. Mars governs action and courage. This is the highest-energy day for pushing through resistance and starting things. The quality can also bring friction — Mars rules conflict as well as courage. Either way, the energy is not neutral.",
+ stable:"Tuesday carries Martian energy. direct, initiating, high-force. Mars governs action and courage. This is the highest-energy day for pushing through resistance and starting things. The quality can also bring friction. Mars rules conflict as well as courage. Either way, the energy is not neutral.",
  moonCtx:{ Fire:"Mars Day in a Fire moon: the most action-forward combination. Drive and expression compound.", Water:"Mars Day in a Water moon: the friction surfaces emotional material. Something that's been avoided shows up.", Earth:"Mars Day in an Earth moon: physical action, building, and doing. Very concrete energy.", Air:"Mars Day in an Air moon: mental decisiveness. Arguments and breakthroughs both available." }
 },
 {sym:"☿", name:"Mercury Day", planet:"Mercury",   col:"#78c048", kw:["communication","thought","patterning"],
- stable:"Wednesday carries Mercurial energy — fast, connective, pattern-making. Mercury governs communication and the movement of information. Messages land clearly. Conversations, writing, and negotiations are supported. The mind moves quickly and makes connections it misses on other days.",
+ stable:"Wednesday carries Mercurial energy. fast, connective, pattern-making. Mercury governs communication and the movement of information. Messages land clearly. Conversations, writing, and negotiations are supported. The mind moves quickly and makes connections it misses on other days.",
  moonCtx:{ Fire:"Mercury Day in a Fire moon: creative ideas get articulated. What was felt becomes speakable.", Water:"Mercury Day in a Water moon: emotional intelligence finds its words.", Earth:"Mercury Day in an Earth moon: practical communication, clear instructions, tangible plans.", Air:"Mercury Day in an Air moon: the sharpest mental clarity of the week in the clearest mental moon. Thinking and communicating peak together." }
 },
 {sym:"♃", name:"Jupiter Day", planet:"Jupiter",   col:"#e8a030", kw:["expansion","perspective","meaning"],
- stable:"Thursday carries Jupiterian energy — wide, generous, long-view. Jupiter governs expansion and meaning. This is the most philosophical day of the week: good for strategy, teaching, and work that benefits from seeing the larger arc. The quality is fortunate and growth-oriented. Detail shrinks; direction expands.",
- moonCtx:{ Fire:"Jupiter Day in a Fire moon: the creative vision expands. The 'why' behind the making becomes visible.", Water:"Jupiter Day in a Water moon: emotional depth gets meaning — the bigger pattern behind the feeling.", Earth:"Jupiter Day in an Earth moon: the long-term significance of practical work becomes clear.", Air:"Jupiter Day in an Air moon: the widest perspective of the widest element. Big thinking, big connections." }
+ stable:"Thursday carries Jupiterian energy. wide, generous, long-view. Jupiter governs expansion and meaning. This is the most philosophical day of the week: good for strategy, teaching, and work that benefits from seeing the larger arc. The quality is fortunate and growth-oriented. Detail shrinks; direction expands.",
+ moonCtx:{ Fire:"Jupiter Day in a Fire moon: the creative vision expands. The 'why' behind the making becomes visible.", Water:"Jupiter Day in a Water moon: emotional depth gets meaning. the bigger pattern behind the feeling.", Earth:"Jupiter Day in an Earth moon: the long-term significance of practical work becomes clear.", Air:"Jupiter Day in an Air moon: the widest perspective of the widest element. Big thinking, big connections." }
 },
 {sym:"♀", name:"Venus Day",   planet:"Venus",     col:"#e080a8", kw:["beauty","harmony","connection"],
- stable:"Friday carries Venusian energy — aesthetic, relational, easeful. Venus governs beauty and harmony. This is the most relational and pleasurable day of the week: creative work involving aesthetics is strongly supported, social connection comes easily, and effort tends to feel less like effort. The quality is graceful.",
+ stable:"Friday carries Venusian energy. aesthetic, relational, easeful. Venus governs beauty and harmony. This is the most relational and pleasurable day of the week: creative work involving aesthetics is strongly supported, social connection comes easily, and effort tends to feel less like effort. The quality is graceful.",
  moonCtx:{ Fire:"Venus Day in a Fire moon: the most beautiful day of the most expressive moon. Make something.", Water:"Venus Day in a Water moon: depth and beauty combine. Relationships are the real work today.", Earth:"Venus Day in an Earth moon: tangible beauty. Aesthetic decisions are sharpest here.", Air:"Venus Day in an Air moon: beautiful thinking, harmonious exchange, elegant ideas." }
 },
 {sym:"♄", name:"Saturn Day",  planet:"Saturn",    col:"#9a8860", kw:["structure","discipline","mastery"],
- stable:"Saturday carries Saturnian energy — serious, structural, long-range. Saturn governs discipline and the slow accumulation of mastery. This is the most committed day of the week: work that requires sustained concentration or long-term thinking is supported. Saturn rewards consistency over brilliance.",
+ stable:"Saturday carries Saturnian energy. serious, structural, long-range. Saturn governs discipline and the slow accumulation of mastery. This is the most committed day of the week: work that requires sustained concentration or long-term thinking is supported. Saturn rewards consistency over brilliance.",
  moonCtx:{ Fire:"Saturn Day in a Fire moon: the structure behind the expression. Creative discipline over creative chaos.", Water:"Saturn Day in a Water moon: the deep work gets organized. Emotional intelligence finds form.", Earth:"Saturn Day in an Earth moon: the most grounded, structural, enduring combination of the week.", Air:"Saturn Day in an Air moon: disciplined thinking. Systems, frameworks, and committed ideas." }
 },
 ];
@@ -402,28 +463,28 @@ const PLANETS = [
 // ═══════════════════════════════════════════════════
 const PHASES = [
 {name:"New Moon",        max:1.85,  em:"🌑", kw:["reset","potential","darkness"],
- stable:"The astronomical moon is invisible — zero reflected light. The 29.5-day lunar cycle begins again from dark. New Moon brings a quality of inwardness and new beginning: energy is available but not yet visible. The sky at night is its darkest.",
- context:"Things started now are still in their seed state — present but not yet showing."},
+ stable:"The astronomical moon is invisible. zero reflected light. The 29.5-day lunar cycle begins again from dark. New Moon brings a quality of inwardness and new beginning: energy is available but not yet visible. The sky at night is its darkest.",
+ context:"Things started now are still in their seed state. present but not yet showing."},
 {name:"Waxing Crescent", max:7.38,  em:"🌒", kw:["emergence","initiation","early momentum"],
- stable:"A thin crescent appears in the evening sky. The first light after dark — the cycle is under way but not yet established. Momentum exists but isn't full. The direction is visible; the structure is still forming.",
+ stable:"A thin crescent appears in the evening sky. The first light after dark. the cycle is under way but not yet established. Momentum exists but isn't full. The direction is visible; the structure is still forming.",
  context:"Early movement is supported. Completion is not yet the point."},
 {name:"First Quarter",   max:9.22,  em:"🌓", kw:["friction","commitment","decision"],
- stable:"Half the moon is lit. The cycle is at its midpoint between New and Full — which means something needs to be committed to. The First Quarter brings friction: the direction is clear enough to push against resistance. Things don't coast here.",
+ stable:"Half the moon is lit. The cycle is at its midpoint between New and Full. which means something needs to be committed to. The First Quarter brings friction: the direction is clear enough to push against resistance. Things don't coast here.",
  context:"The energy builds and pushes. What was started requires active attention now."},
 {name:"Waxing Gibbous",  max:14.77, em:"🌔", kw:["refinement","pressure","approach"],
- stable:"More than half lit and growing. The Full Moon is close — which means the pressure is on. This is the refinement phase: the work is nearly complete, but nearly isn't done. Improve what's in progress rather than start something new.",
+ stable:"More than half lit and growing. The Full Moon is close. which means the pressure is on. This is the refinement phase: the work is nearly complete, but nearly isn't done. Improve what's in progress rather than start something new.",
  context:"Completion is close. The quality of what's already in motion matters more than new additions."},
 {name:"Full Moon",       max:16.61, em:"🌕", kw:["culmination","illumination","revelation"],
- stable:"Maximum illumination. The moon is fully lit, opposite the sun. Everything set in motion at New Moon is now visible. The Full Moon is the loudest point in the 29-day cycle — completions, breakthroughs, and emotional peaks all happen here.",
+ stable:"Maximum illumination. The moon is fully lit, opposite the sun. Everything set in motion at New Moon is now visible. The Full Moon is the loudest point in the 29-day cycle. completions, breakthroughs, and emotional peaks all happen here.",
  context:"What's been building is now fully exposed. What needed to be seen is visible."},
 {name:"Waning Gibbous",  max:22.15, em:"🌖", kw:["integration","sharing","reflection"],
- stable:"Just past Full. The light has peaked and the cycle begins its return. The energy shifts from output to integration — processing what happened at and before the Full Moon. Teaching, sharing, and consolidating what was built are the natural patterns here.",
+ stable:"Just past Full. The light has peaked and the cycle begins its return. The energy shifts from output to integration. processing what happened at and before the Full Moon. Teaching, sharing, and consolidating what was built are the natural patterns here.",
  context:"The harvest of the Full Moon gets sorted and shared. What's worth keeping becomes clear."},
 {name:"Last Quarter",    max:23.99, em:"🌗", kw:["release","pivot","pruning"],
- stable:"Half lit again, now decreasing. The cycle is returning toward dark — and it's specific about what it releases. The Last Quarter brings discernment: what worked gets kept, what didn't gets cut. The quality is clarifying rather than initiating.",
+ stable:"Half lit again, now decreasing. The cycle is returning toward dark. and it's specific about what it releases. The Last Quarter brings discernment: what worked gets kept, what didn't gets cut. The quality is clarifying rather than initiating.",
  context:"Natural endings are happening. The pruning here is useful, not painful."},
 {name:"Waning Crescent", max:29.53, em:"🌘", kw:["rest","clearing","surrender"],
- stable:"A thin crescent in the dawn sky. The moon is almost new again — the 29.5-day cycle nearly complete. The energy is low by design. Rest, reflection, and clearing are the natural patterns. Forcing productivity here works against the cycle.",
+ stable:"A thin crescent in the dawn sky. The moon is almost new again. the 29.5-day cycle nearly complete. The energy is low by design. Rest, reflection, and clearing are the natural patterns. Forcing productivity here works against the cycle.",
  context:"The New Moon is close. This is the end of the cycle, not the beginning of something new."},
 ];
 
@@ -431,11 +492,11 @@ const PHASES = [
 // ELEMENT DESCRIPTIONS
 // ═══════════════════════════════════════════════════
 const EL_STABLE = {
-  Fire:  "The Fire moons are where things come out of hiding. Energy moves outward — what was internal becomes visible, expressible, shareable. There are three Fire moons in the year: Bloom, Flame, and Spark. Each is outward-moving in a different register — creative expression, conviction, and ignition.",
-  Water: "The Water moons are where things go inward. Feeling, depth, and what's beneath the surface. There are three Water moons: Dreaming, Nectar, and Shedding. Each operates in a different register of the internal — pre-verbal stillness, sensory receiving, and emotional release.",
-  Earth: "The Earth moons are where things become real and physical. Form, patience, and what lasts. There are three Earth moons: Seed, Fruit, and Sunroot. Each is grounding in a different way — planting direction, receiving results, and standing in established presence.",
-  Air:   "The Air moons connect everything else. Thought, movement, and the mind that carries understanding between seasons. There are four Air moons — more than any other element. Sprout, Harvest, Shadow, and Silence. Air is the breath that runs through the year, making sense of what Fire ignited, Water deepened, and Earth grounded.",
-  All:   "Today is the Day Out of Time — December 31, the one day each year outside all 13 moons. The elemental wheel pauses."
+  Fire:  "The Fire moons are where things come out of hiding. Energy moves outward. what was internal becomes visible, expressible, shareable. There are three Fire moons in the year: Bloom, Flame, and Spark. Each is outward-moving in a different register. creative expression, conviction, and ignition.",
+  Water: "The Water moons are where things go inward. Feeling, depth, and what's beneath the surface. There are three Water moons: Dreaming, Nectar, and Shedding. Each operates in a different register of the internal. pre-verbal stillness, sensory receiving, and emotional release.",
+  Earth: "The Earth moons are where things become real and physical. Form, patience, and what lasts. There are three Earth moons: Seed, Fruit, and Sunroot. Each is grounding in a different way. planting direction, receiving results, and standing in established presence.",
+  Air:   "The Air moons connect everything else. Thought, movement, and the mind that carries understanding between seasons. There are four Air moons. more than any other element. Sprout, Harvest, Shadow, and Silence. Air is the breath that runs through the year, making sense of what Fire ignited, Water deepened, and Earth grounded.",
+  All:   "Today is the Day Out of Time. December 31, the one day each year outside all 13 moons. The elemental wheel pauses."
 };
 
 // ═══════════════════════════════════════════════════
@@ -456,8 +517,8 @@ function moonData(date){
   const dot = {
     name:"Day Out of Time", arch:"The Threshold", el:"All", sym:"◎",
     kw:["threshold","pause","between"],
-    stable:"December 31. The one day each year that sits outside all 13 moons and all 4 weeks. The Earth Calendar runs 364 days — 13 × 28. The 365th day belongs to no cycle. It is the sacred pause between the year that closed and the year that hasn't opened.",
-    ctx:{0:"The cycle is complete. Today holds no moon energy, no week rhythm — only the space between."}
+    stable:"December 31. The one day each year that sits outside all 13 moons and all 4 weeks. The Earth Calendar runs 364 days. 13 × 28. The 365th day belongs to no cycle. It is the sacred pause between the year that closed and the year that hasn't opened.",
+    ctx:{0:"The cycle is complete. Today holds no moon energy, no week rhythm. only the space between."}
   };
   return{moon:dot, day:0, week:{n:0,name:"Day Out of Time",days:"31",kw:[],stable:"",elCtx:{}}};
 }
@@ -465,7 +526,7 @@ function moonData(date){
 function lunarPhase(date){
   const ref=new Date(2000,0,6,18,14,0), cycle=29.53058867;
   const phase=(((date-ref)/86400000%cycle)+cycle)%cycle;
-  const illum=Math.round(Math.max(0,Math.min(100,(1-Math.abs(phase-14.77)/14.77)*100)));
+  const illum=Math.round((1-Math.cos(phase/cycle*2*Math.PI))/2*100);
   for(const p of PHASES) if(phase<=p.max) return{...p,illum};
   return{...PHASES[0],illum:0};
 }
@@ -504,28 +565,28 @@ function render(date){
   <div class="card" style="border-top:2px solid ${c.p};box-shadow:0 0 70px ${c.d};position:relative;overflow:hidden;padding:32px 40px 30px">
 
     <!-- GLYPH: right half watermark -->
-    <div style="position:absolute;right:0;top:0;width:40%;height:100%;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none;opacity:0.13">
+    <div class="sigil-wrap" style="position:absolute;right:0;top:0;width:40%;height:100%;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
       ${constellationSVG(moon.name, '#65c5b8')}
     </div>
 
     <!-- TEXT -->
     <div style="position:relative;z-index:1;max-width:60%">
-      <p class="hero-eyebrow" style="color:${c.p};text-align:left;margin-bottom:10px">${moonIdx > 0 ? `Moon ${moonIdx} of 13` : 'Day Out of Time'}</p>
-      <h2 class="hero-name" style="text-align:left;font-size:clamp(30px,5vw,50px);margin-bottom:4px">${moon.name} Moon</h2>
-      <p class="hero-arch" style="text-align:left;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <p class="hero-eyebrow hero-ink-1" style="color:${c.p};text-align:left;margin-bottom:10px">${moonIdx > 0 ? `Moon ${moonIdx} of 13` : 'Day Out of Time'}</p>
+      <h2 class="hero-name hero-ink-2" style="text-align:left;font-size:clamp(30px,5vw,50px);margin-bottom:4px">${moon.name} Moon</h2>
+      <p class="hero-arch hero-ink-3" style="text-align:left;margin-bottom:4px;display:flex;align-items:center;gap:10px">
         <span>${moon.arch}</span>
         <span style="display:inline-block;width:20px;height:20px;flex-shrink:0;opacity:0.8">${elSVG(moon.el, c.p)}</span>
         <span style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:${c.p}">${moon.el}</span>
       </p>
-      <p style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:'Cinzel',serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--cream-dim)">
+      <p class="hero-ink-3" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:'Cinzel',serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--cream-dim)">
         ${day>0?`<span>Day ${day} of 28</span><span style="color:${c.p};opacity:0.4">·</span>`:''}
         <span>${DNAMES[date.getDay()]}</span>
-        <span style="font-size:24px;line-height:1;color:${pl.col};filter:drop-shadow(0 0 8px ${pl.col}80);font-family:serif;text-transform:none;letter-spacing:0">${pl.sym}</span>
+        <span class="planet-sym-pulse" style="font-size:24px;line-height:1;color:${pl.col};font-family:serif;text-transform:none;letter-spacing:0">${pl.sym}</span>
       </p>
-      <div class="keywords" style="margin:14px 0 0;justify-content:flex-start">${kws(moon.kw, c.p, c.b)}</div>
-      <div style="height:1px;background:linear-gradient(90deg,${c.p},rgba(201,168,76,0.08),transparent);margin:16px 0"></div>
-      <p class="hero-body" style="text-align:left;margin:0 0 12px">${moon.stable}</p>
-      ${moonCtxSentence ? `<p class="hero-context" style="color:${c.p};text-align:left;font-style:italic;font-size:clamp(16px,1.8vw,19px);line-height:1.7">${moonCtxSentence}</p>` : ''}
+      <div class="keywords hero-ink-4" style="margin:14px 0 0;justify-content:flex-start">${kws(moon.kw, c.p, c.b)}</div>
+      <div class="hero-ink-4" style="height:1px;background:linear-gradient(90deg,${c.p},rgba(201,168,76,0.08),transparent);margin:16px 0"></div>
+      <p class="hero-body hero-ink-5" style="text-align:left;margin:0 0 12px">${moon.stable}</p>
+      ${moonCtxSentence ? `<p class="hero-context hero-ink-6" style="color:${c.p};text-align:left;font-style:italic;font-size:clamp(16px,1.8vw,19px);line-height:1.7">${moonCtxSentence}</p>` : ''}
     </div>
 
   </div>
@@ -557,7 +618,7 @@ function render(date){
     <div class="c-head" style="margin-bottom:12px">
       <div>
         <p class="c-label">Week of Moon</p>
-        <p class="c-title">Week ${week.n} — ${week.name}</p>
+        <p class="c-title">Week ${week.n}. ${week.name}</p>
         <p class="c-sub">Days ${week.days} of 28 &nbsp;·&nbsp; ${weekPosition(day, week.n)}</p>
       </div>
       <div style="text-align:right">
@@ -569,7 +630,6 @@ function render(date){
     <p class="c-body">${week.stable}</p>
     <div class="c-divider"></div>
     <p class="c-context" style="color:${c.p}">${weekPositionText(day, week.n, moon.el)}</p>
-    ${weekCtxSentence ? `<div class="c-divider"></div><p class="c-context" style="color:${c.p}">${weekCtxSentence}</p>` : ''}
   </div>
 
   <!-- ── PLANET ── -->
@@ -629,12 +689,12 @@ const EC_EL_KW = {
 
 function weekPosition(day, weekN){
   if(day === 0) return 'Day Out of Time';
-  const dayInWeek = day - (weekN - 1) * 7; // 1–7
-  if(dayInWeek === 1) return `Day 1 of 7 — opening`;
-  if(dayInWeek === 7) return `Day 7 of 7 — closing`;
-  if(dayInWeek <= 3) return `Day ${dayInWeek} of 7 — early`;
-  if(dayInWeek === 4) return `Day 4 of 7 — midpoint`;
-  return `Day ${dayInWeek} of 7 — late`;
+  const dayInWeek = day - (weekN - 1) * 7;
+  if(dayInWeek === 1) return `Day 1 of 7, opening`;
+  if(dayInWeek === 7) return `Day 7 of 7, closing`;
+  if(dayInWeek <= 3) return `Day ${dayInWeek} of 7, early`;
+  if(dayInWeek === 4) return `Day 4 of 7, midpoint`;
+  return `Day ${dayInWeek} of 7, late`;
 }
 
 function weekPositionText(day, weekN, el){
@@ -644,28 +704,28 @@ function weekPositionText(day, weekN, el){
 
   const map = {
     1: {
-      early:   "The week just opened. The field is at its widest — nothing is locked, everything is possible. Direction is still forming.",
+      early:   "The week just opened. The field is at its widest. Direction is still forming.",
       mid:     "The opening week is finding its shape. What arrived in the first days is beginning to clarify.",
       late:    "Week 1 is nearing its end. The initial impressions are settling into something more specific.",
-      closing: "The final day of Dream & Drop. What this week revealed carries into Week 2 tomorrow.",
+      closing: "The final day of Dream and Drop. What this week revealed carries into Week 2 tomorrow.",
     },
     2: {
-      early:   "Spark & Plan has just opened. The signal from Week 1 is sharpening — this is when direction becomes actionable.",
+      early:   "Spark and Plan has just opened. The signal from Week 1 is sharpening into something actionable.",
       mid:     "Mid-planning week. The map is being drawn. What gets decided here sets the trajectory for Week 3.",
-      late:    "Late Week 2 — the preparation is nearly complete. The structure is in place before the action begins.",
-      closing: "The last day of Spark & Plan. What hasn't been decided yet either gets resolved today or carries into the build week unresolved.",
+      late:    "Late Week 2. The preparation is nearly complete. Structure is in place before the action begins.",
+      closing: "The last day of Spark and Plan. What hasn't been decided either gets resolved today or enters the build week open.",
     },
     3: {
-      early:   "Move & Build has just opened. The momentum that was prepared is now available — this is the highest-energy window of the moon.",
+      early:   "Move and Build has just opened. The momentum that was prepared is now available.",
       mid:     "Mid-build week. The work is in full motion. This is the peak execution point of the entire 28-day cycle.",
-      late:    "Late Week 3 — the build is reaching its natural completion. What was in motion is landing.",
-      closing: "The last day of Move & Build. What gets finished today is finished. What doesn't carry into Week 4 for reflection.",
+      late:    "Late Week 3. The build is reaching its natural completion. What was in motion is landing.",
+      closing: "The last day of Move and Build. What gets finished today is finished. What doesn't carries into Week 4.",
     },
     4: {
-      early:   "Reflect & Release has just opened. The momentum of Week 3 is still present, but the energy is shifting toward completion.",
-      mid:     "Mid-completion week. Assessment is the work now — what moved, what didn't, what the moon actually produced.",
-      late:    "Late Week 4 — the moon is nearly complete. Release is the primary motion. The next moon is close.",
-      closing: "The final day of this moon. Tomorrow a new 28-day cycle begins. Tonight belongs to what needs to be let go.",
+      early:   "Reflect and Release has just opened. The momentum of Week 3 is still present, but the energy is shifting toward completion.",
+      mid:     "Mid-completion week. Assessment is the work now. What moved, what didn't, what the moon actually produced.",
+      late:    "Late Week 4. The moon is nearly complete. The next moon is close.",
+      closing: "The final day of this moon. Tomorrow a new 28-day cycle begins.",
     },
   };
 
@@ -685,33 +745,71 @@ function pips(day,week,col){
 }
 
 function buildSynthesis(moon, week, pl, lp, day, c){
-  if(week.n===0) return `Today is the Day Out of Time — December 31. The 13-moon cycle is complete. No moon governs today. No week. The Earth Calendar year ends and the space between years opens.<br><br><strong style="color:${c.p}">The astronomical moon is ${lp.name} — ${lp.illum}% illuminated.</strong> ${lp.context}`;
+  if(week.n===0) return `Today is the Day Out of Time. December 31. The 13-moon cycle is complete. No moon governs today. No week. The year ends and the space between years opens.<br><br>The astronomical moon is ${lp.name}, ${lp.illum}% illuminated. ${lp.context}`;
 
-  const moonRef = `<strong style="color:${c.p}">${moon.name} Moon</strong>`;
-  const weekRef = `<strong style="color:${c.p}">Week ${week.n}: ${week.name}</strong>`;
-  const plRef   = `<strong style="color:${pl.col}">${pl.name}</strong>`;
-  const phRef   = `<strong>${lp.name}</strong>`;
   const moonN   = MOONS.indexOf(moon)+1;
+  const dayInWeek = day - (week.n-1)*7;
+  const weeksRemaining = 4 - week.n;
+  const daysRemaining = 28 - day;
+  const prevMoon = moonN > 1 ? MOONS[moonN-2] : null;
+  const nextMoon = moonN < 13 ? MOONS[moonN] : null;
+  const nextWeek = week.n < 4 ? WEEKS[week.n] : null; // WEEKS is 0-indexed so week.n = next week
 
-  const weekCtx = week.elCtx[moon.el] || '';
-  const plCtx   = pl.moonCtx[moon.el] || '';
+  // Arc sentences. written fresh, not repeating card content
+  const arcMap = {
+    // Week 1 arc: just arrived from previous moon, whole cycle ahead
+    1: {
+      early: prevMoon
+        ? `${prevMoon.name} Moon just closed. Whatever that ${prevMoon.el.toLowerCase()} cycle asked of you is done. ${moon.name} opens differently. ${moon.el} element, first week, nothing fixed yet. The full 28 days are still ahead.`
+        : `The year opens in ${moon.name} Moon. First week, first days. The whole cycle is still ahead, direction not yet visible.`,
+      mid: prevMoon
+        ? `A few days into ${moon.name} Moon now. The shift from ${prevMoon.name} is settling. Week 1 is where this moon's character starts to declare itself, before anything is committed to.`
+        : `A few days into the year's first moon. The field is wide. Nothing needs to be decided yet.`,
+      late: `Week 1 of ${moon.name} Moon is almost done. What's been forming in these opening days will sharpen into direction when Week 2 opens. Three weeks remain in this cycle.`,
+      closing: `Last day of Week 1. Tomorrow ${moon.name} Moon enters Spark and Plan. the planning week. What this first week revealed is the raw material. Week 2 works with it.`,
+    },
+    // Week 2 arc: Week 1 done, building toward action
+    2: {
+      early: `Week 1 of ${moon.name} Moon is behind you. Spark and Plan has just opened. The impressions from the opening week are available now as actual direction. Two and a half weeks remain.`,
+      mid: `Midway through Week 2 of ${moon.name} Moon. The planning window is at its most useful here. What gets mapped now is what Week 3 builds from.`,
+      late: `Late in the planning week. ${moon.name} Moon's action phase begins soon. What's been prepared becomes what's executed. One day of planning left, then the build starts.`,
+      closing: `Last day of Spark and Plan. ${moon.name} Moon enters Move and Build tomorrow. The preparation phase is complete. What's ready is ready.`,
+    },
+    // Week 3 arc: peak action, what has the moon produced so far
+    3: {
+      early: `${moon.name} Moon is in its peak week. Weeks 1 and 2 set the direction and mapped the plan. This is where that becomes real. The highest-output window of the cycle.`,
+      mid: `Mid-build week in ${moon.name} Moon. The work that was prepared in Week 2 is fully in motion. One week of action left after this, then the moon moves into completion.`,
+      late: `${moon.name} Moon is approaching its final stretch. The build week is nearly done. Week 4 opens soon, and with it the question of what this cycle actually produced.`,
+      closing: `Last day of Move and Build. ${moon.name} Moon enters Reflect and Release tomorrow. Whatever is in motion now carries into the completion week. The building phase is done.`,
+    },
+    // Week 4 arc: what was this moon, what's next
+    4: {
+      early: `${moon.name} Moon is in its final week. Three weeks of ${moon.el.toLowerCase()} energy have moved through. What's left now is integration${nextMoon ? ` before ${nextMoon.name} Moon opens` : ''}.`,
+      mid: `Midway through the last week of ${moon.name} Moon. The cycle has produced what it's going to produce. What remains is recognising it clearly${nextMoon ? ` and releasing what doesn't carry into ${nextMoon.name}` : ''}.`,
+      late: nextMoon
+        ? `${moon.name} Moon is nearly complete. ${nextMoon.name} Moon opens in ${daysRemaining} day${daysRemaining===1?'':'s'}. ${nextMoon.el} element, ${nextMoon.arch}. The shift is already close.`
+        : `The final moon of the year is nearly complete. The Day Out of Time is ${daysRemaining} day${daysRemaining===1?'':'s'} away.`,
+      closing: nextMoon
+        ? `Last day of ${moon.name} Moon. ${nextMoon.name} Moon opens tomorrow. ${nextMoon.arch}. ${nextMoon.el} element. Tonight is the threshold.`
+        : `Last day of ${moon.name} Moon and the last day of the year's final cycle. The Day Out of Time is tomorrow.`,
+    },
+  };
 
-  // Build the synthesis: Moon + Week combination → Planet → Phase
-  const parts = [];
+  const pos = dayInWeek <= 2 ? 'early' : dayInWeek <= 4 ? 'mid' : dayInWeek <= 6 ? 'late' : 'closing';
+  const arcText = (arcMap[week.n] && arcMap[week.n][pos]) || '';
 
-  // Line 1: moon + week + day position
-  parts.push(`${moonRef} — Moon ${moonN} of 13. ${weekRef}, Day ${day} of 28.`);
+  // Element + week combination insight (from weekCtxSentence. not shown in week card)
+  const elWeekInsight = week.elCtx[moon.el] || '';
 
-  // Line 2: what this moon/week combination means
-  if(weekCtx) parts.push(weekCtx);
+  // Planet insight. what this planet means in this specific moon/week context
+  const plCtx = pl.moonCtx[moon.el] || pl.stable.split('.')[0];
 
-  // Line 3: planet in context
-  parts.push(`${plRef}: ${pl.kw.join(' · ')}. ${plCtx||pl.stable.split('.')[0]+'.'}`);
-
-  // Line 4: lunar phase
-  parts.push(`${phRef} — ${lp.illum}% illuminated. ${lp.context}`);
-
-  return parts.join('<br><br>');
+  return [
+    arcText,
+    elWeekInsight,
+    `<strong style="color:${pl.col}">${pl.name}</strong> today. ${plCtx}.`,
+    `${lp.name}, ${lp.illum}% illuminated. ${lp.context}`
+  ].filter(Boolean).join('<br><br>');
 }
 
 function elSVG(el, col, size=60){
@@ -873,19 +971,6 @@ function orbSVG(col){
 // CONTROLS
 // ═══════════════════════════════════════════════════
 let cur=new Date(); cur.setHours(12,0,0,0);
-document.getElementById('prev-day').onclick=()=>{cur.setDate(cur.getDate()-1);render(cur);};
-document.getElementById('next-day').onclick=()=>{cur.setDate(cur.getDate()+1);render(cur);};
-document.getElementById('date-picker').onchange=e=>{
-  if(!e.target.value)return;
-  const[y,m,d]=e.target.value.split('-').map(Number);
-  cur=new Date(y,m-1,d,12,0,0);render(cur);
-};
-document.onkeydown=e=>{
-  if(e.key==='ArrowLeft'){cur.setDate(cur.getDate()-1);render(cur);}
-  if(e.key==='ArrowRight'){cur.setDate(cur.getDate()+1);render(cur);}
-  if(e.key==='t'||e.key==='T') goToday();
-};
-function goToday(){cur=new Date();cur.setHours(12,0,0,0);render(cur);}
 
 // ═══════════════════════════════════════════════════
 // STARFIELD
@@ -914,16 +999,104 @@ function goToday(){cur=new Date();cur.setHours(12,0,0,0);render(cur);}
 })();
 
 render(cur);
-</script>
-  <script>
-  function reportHeight() {
-    window.parent.postMessage({ type: 'ec-height', height: document.body.scrollHeight }, '*');
+
+// ── SCROLL-TRIGGERED ANIMATIONS ──────────────────────────────────────────────
+
+function initAnimations() {
+  // Switch sigil from reveal to breathing mode after initial animation
+  const sigil = document.querySelector('.sigil-wrap');
+  if (sigil) {
+    setTimeout(() => {
+      sigil.style.animation = 'none';
+      sigil.style.opacity = '0.13';
+      void sigil.offsetWidth; // reflow
+      sigil.classList.add('breathing');
+    }, 2600);
   }
-  window.addEventListener('load', reportHeight);
-  window.addEventListener('resize', reportHeight);
-  // Report again after fonts/images settle
-  setTimeout(reportHeight, 500);
-  setTimeout(reportHeight, 1500);
+
+  // 1. Cards fade up on scroll. slower stagger
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 120);
+        cardObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+
+  // Skip first card (hero). it has its own ink sequence
+  const cards = document.querySelectorAll('.card');
+  cards.forEach((card, i) => {
+    if (i === 0) {
+      card.style.opacity = '1';
+      card.style.transform = 'none';
+      card.style.transition = 'none';
+    } else {
+      cardObserver.observe(card);
+    }
+  });
+
+  // 2. Keywords. mark pending first frame, then animate in smoothly
+  const allKws = document.querySelectorAll('.kw');
+  allKws.forEach(kw => kw.classList.add('anim-pending'));
+
+  const kwObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const kws = entry.target.querySelectorAll('.kw.anim-pending');
+        kws.forEach((kw, i) => {
+          setTimeout(() => {
+            kw.classList.remove('anim-pending');
+            kw.classList.add('visible');
+          }, 200 + i * 100);
+        });
+        kwObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.card').forEach(card => kwObserver.observe(card));
+
+  setTimeout(reportHeight, 1000);
+}
+
+// ── HEIGHT REPORTING ─────────────────────────────────────────────────────────
+
+function reportHeight() {
+  window.parent.postMessage({ type: 'ec-height', height: document.body.scrollHeight }, '*');
+}
+window.addEventListener('load', reportHeight);
+window.addEventListener('resize', reportHeight);
+setTimeout(reportHeight, 500);
+setTimeout(reportHeight, 1500);
+
+// Re-init animations whenever content re-renders (date change)
+const _origRender = render;
+window._renderWithAnims = function(date) {
+  _origRender(date);
+  setTimeout(initAnimations, 50);
+  setTimeout(reportHeight, 800);
+};
+
+document.getElementById('prev-day').onclick = () => { cur.setDate(cur.getDate()-1); window._renderWithAnims(cur); };
+document.getElementById('next-day').onclick = () => { cur.setDate(cur.getDate()+1); window._renderWithAnims(cur); };
+document.getElementById('date-picker').onchange = e => {
+  if(!e.target.value) return;
+  const[y,m,d]=e.target.value.split('-').map(Number);
+  cur=new Date(y,m-1,d,12,0,0);
+  window._renderWithAnims(cur);
+};
+document.onkeydown = e => {
+  if(e.key==='ArrowLeft'){cur.setDate(cur.getDate()-1);window._renderWithAnims(cur);}
+  if(e.key==='ArrowRight'){cur.setDate(cur.getDate()+1);window._renderWithAnims(cur);}
+  if(e.key==='t'||e.key==='T') goToday();
+};
+function goToday(){cur=new Date();cur.setHours(12,0,0,0);window._renderWithAnims(cur);}
+
+// Init on first load
+setTimeout(initAnimations, 100);
 </script>
 </body>
 </html>

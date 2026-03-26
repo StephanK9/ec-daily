@@ -508,18 +508,20 @@ const EL_STABLE = {
 // ═══════════════════════════════════════════════════
 // CALCULATION
 // ═══════════════════════════════════════════════════
-function midnight(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function midnight(d){
+  return new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+}
 
 function moonData(date){
   const y=date.getFullYear(), d=midnight(date);
   for(const m of MOONS){
-    const s=new Date(y,m.s[0]-1,m.s[1]), e=new Date(y,m.e[0]-1,m.e[1]);
+    const s=new Date(Date.UTC(y,m.s[0]-1,m.s[1]));
+    const e=new Date(Date.UTC(y,m.e[0]-1,m.e[1]));
     if(d>=s&&d<=e){
-      const day=Math.floor((d-s)/86400000)+1;
+      const day=Math.round((d-s)/86400000)+1;
       return{moon:m, day, week:WEEKS[Math.min(Math.floor((day-1)/7),3)]};
     }
   }
-  // Day Out of Time
   const dot = {
     name:"Day Out of Time", arch:"The Threshold", el:"All", sym:"◎",
     kw:["threshold","pause","between"],

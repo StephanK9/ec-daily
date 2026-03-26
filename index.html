@@ -22,8 +22,8 @@
 
   #stars { position:fixed; inset:0; z-index:0; pointer-events:none; width:100%; height:100%; }
   .bg-r { position:fixed; inset:0; z-index:0; pointer-events:none;
-    background: radial-gradient(ellipse 60% 50% at 15% 15%, rgba(74,144,196,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 85% 85%, rgba(201,168,76,0.05) 0%, transparent 60%); }
+    background: radial-gradient(ellipse 60% 50% at 15% 15%, rgba(78,205,196,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 85%, rgba(78,205,196,0.05) 0%, transparent 60%); }
 
   .app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:0 28px 100px; }
 
@@ -124,7 +124,7 @@
 
   /* ── HERO CARD ── */
   .hero { padding:52px 48px 48px; text-align:center; position:relative; overflow:hidden; }
-  .hero::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(ellipse 80% 70% at 50% 50%, var(--ec-dim,rgba(201,168,76,0.05)), transparent 70%); }
+  .hero::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(ellipse 80% 70% at 65% 50%, rgba(78,205,196,0.06), transparent 70%); }
   .hero-in { position:relative; z-index:1; }
   .orb { width:110px; height:110px; margin:0 auto 28px; }
   .orb svg { width:100%; height:100%; }
@@ -181,11 +181,17 @@
     .app{padding:0 16px 80px}
     .stats{grid-template-columns:1fr}
     .detail-row{grid-template-columns:1fr}
-    .hero{padding:36px 20px 32px}
+    .hero{padding:28px 20px 28px}
     .c-pad{padding:28px 22px}
     .synth{padding:32px 22px}
     .hero-two-col{grid-template-columns:1fr !important}
     .hero-two-col .hero-right{display:flex;flex-direction:row;justify-content:center;gap:32px;padding-top:0}
+    /* Hero text takes full width on mobile, glyph shrinks to corner */
+    .hero-text-col { max-width:100% !important; }
+    .hero-arch { flex-wrap:wrap; gap:6px !important; }
+    .hero-name { font-size:clamp(28px,8vw,42px) !important; }
+    .keywords { gap:5px; }
+    .kw { font-size:10px; padding:4px 9px; }
   }
 </style>
 </head>
@@ -570,7 +576,7 @@ function render(date){
     </div>
 
     <!-- TEXT -->
-    <div style="position:relative;z-index:1;max-width:60%">
+    <div class="hero-text-col" style="position:relative;z-index:1;max-width:60%">
       <p class="hero-eyebrow hero-ink-1" style="color:${c.p};text-align:left;margin-bottom:10px">${moonIdx > 0 ? `Moon ${moonIdx} of 13` : 'Day Out of Time'}</p>
       <h2 class="hero-name hero-ink-2" style="text-align:left;font-size:clamp(30px,5vw,50px);margin-bottom:4px">${moon.name} Moon</h2>
       <p class="hero-arch hero-ink-3" style="text-align:left;margin-bottom:4px;display:flex;align-items:center;gap:10px">
